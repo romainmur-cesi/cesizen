@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Tableau de bord</h1>
+<h1>Ressources éducatives</h1>
 
 {-- Ici vous pourrez ajouter le contenu spécifique à cette vue --}
 @endsection

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<h1>Modifier un profile</h1>
+<h1>Créer un exercise</h1>
 
 <form action="#" method="POST">
     @csrf
