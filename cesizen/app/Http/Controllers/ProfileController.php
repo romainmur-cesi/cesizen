@@ -1,42 +1,60 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function edit()
+    /**
+     * Display the user's profile form.
+     */
+    public function edit(Request $request): View
     {
-        $user = auth()->user();
-        return view('profile.edit', compact('user'));
+        return view('profile.edit', [
+            'user' => $request->user(),
+        ]);
     }
 
-    public function update(Request $request)
+    /**
+     * Update the user's profile information.
+     */
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = auth()->user();
+        $request->user()->fill($request->validated());
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
-            'password' => 'nullable|confirmed|min:8',
-            'photo' => 'nullable|image|max:2048',
+        if ($request->user()->isDirty('email')) {
+            $request->user()->email_verified_at = null;
+        }
+
+        $request->user()->save();
+
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Delete the user's account.
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
         ]);
 
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
+        $user = $request->user();
 
-        if ($request->filled('password')) {
-            $user->password = Hash::make($validated['password']);
-        }
+        Auth::logout();
 
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('avatars', 'public');
-            $user->photo = $path;
-        }
+        $user->delete();
 
-        $user->save();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return redirect()->route('profile.edit')->with('success', 'Profil mis à jour');
+        return Redirect::to('/');
     }
 }

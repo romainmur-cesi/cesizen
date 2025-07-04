@@ -45,4 +45,34 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relation avec le modèle Utilisateur
+     * Un User a un Utilisateur (profil détaillé)
+     */
+    public function utilisateur()
+    {
+        return $this->hasOne(Utilisateur::class, 'user_id');
+    }
+
+    /**
+     * Créer automatiquement un utilisateur après la création d'un User
+     */
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            // Extraire nom et prénom du name si possible
+            $nameParts = explode(' ', $user->name, 2);
+            $prenom = $nameParts[0] ?? '';
+            $nom = $nameParts[1] ?? '';
+
+            Utilisateur::create([
+                'user_id' => $user->id,
+                'nom' => $nom,
+                'prenom' => $prenom,
+                'email' => $user->email,
+                'mot_de_passe' => $user->password,
+            ]);
+        });
+    }
 }

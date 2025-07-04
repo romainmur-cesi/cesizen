@@ -1,0 +1,21 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('contenus', function (Blueprint $table) {
+            $table->id();
+            $table->string('titre', 25);
+            $table->string('description', 255);
+            $table->string('categorie', 25);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void {
+        Schema::dropIfExists('contenus');
+    }
+};

@@ -1,28 +1,26 @@
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <title>CESIZen</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- head... -->
 </head>
-<body>
-    <nav>
-        <a href="{{ route('home') }}">Accueil</a>
-        @auth
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-            <a href="{{ route('profile.edit') }}">Profil</a>
-            <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit">Déconnexion</button>
-            </form>
-        @else
-            <a href="{{ route('login') }}">Connexion</a>
-            <a href="{{ route('register') }}">Inscription</a>
-        @endauth
-    </nav>
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        @include('layouts.navigation')
 
-    <main>
-        @yield('content')
-    </main>
+        <!-- Page Heading -->
+        @isset($header)
+            <header class="bg-white dark:bg-gray-800 shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    {{ $header }}
+                </div>
+            </header>
+        @endisset
+
+        <!-- Page Content -->
+        <main>
+            @yield('content')
+        </main>
+    </div>
 </body>
 </html>

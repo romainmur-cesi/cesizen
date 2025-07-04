@@ -1,48 +1,37 @@
 <?php
-
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
+use Illuminate\Support\Facades\Route;
 
-// Page d’accueil publique
-Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route d'accueil
+Route::get('/', function () {
+    return view('welcome');
+});
 
-// Articles accessibles à tous (visiteurs)
-Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
-Route::get('/articles/{id}', [ArticleController::class, 'show'])->name('articles.show');
+// Route du tableau de bord
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Auth routes (générées par Breeze ou Laravel UI)
-require __DIR__.'/auth.php';
+// Routes d'inscription
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
-// Groupes routes utilisateurs connectés
-Route::middleware(['auth'])->group(function () {
-    // Dashboard utilisateur
-    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+// Routes pour la réinitialisation du mot de passe
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-    // Profil utilisateur
+// Routes du profil utilisateur
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    // Favoris, journal, exercices... (à ajouter)
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Groupes routes admin (middleware admin)
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Gestion des utilisateurs
-    Route::resource('users', AdminUserController::class);
-    // Gestion des contenus (articles, exercices...) à ajouter
-});
 
-// Articles
-Route::resource('articles', ArticleController::class);
-
-// Profil utilisateur (édition, mise à jour)
-Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-
-// Administration des utilisateurs (groupe avec middleware admin si besoin)
-Route::prefix('admin')->name('admin.')->middleware('auth', 'can:admin')->group(function () {
-    Route::resource('users', UserController::class);
-});
+// Inclure le fichier d'authentification pour les autres routes d'authentification
+require __DIR__.'/auth.php';
