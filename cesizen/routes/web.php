@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/exercice', function () {
+    return view('exercises/exercice');
+});
 
 // Inclure le fichier d'authentification pour les autres routes d'authentification
 require __DIR__.'/auth.php';
