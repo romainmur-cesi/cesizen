@@ -384,114 +384,173 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <h1>Connexion</h1>
-            <p>Connectez-vous à votre compte</p>
-        </div>
-
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}" class="login-form">
-            @csrf
-
-            <!-- Email -->
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" 
-                       id="email" 
-                       name="email" 
-                       value="{{ old('email') }}" 
-                       class="form-control @error('email') is-invalid @enderror"
-                       placeholder="votre@email.com"
-                       required
-                       autocomplete="email">
-                @error('email')
-                    <span class="invalid-feedback">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
-
-            <!-- Mot de passe -->
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <div class="password-input">
-                    <input type="password" 
-                           id="password" 
-                           name="password" 
-                           class="form-control @error('password') is-invalid @enderror"
-                           placeholder="Votre mot de passe"
-                           required
-                           autocomplete="current-password">
-                    <button type="button" class="toggle-password" onclick="togglePassword()">
-                        <i class="fas fa-eye" id="eye-icon"></i>
-                    </button>
-                </div>
-                @error('password')
-                    <span class="invalid-feedback">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
-
-            <!-- Se souvenir de moi / Mot de passe oublié -->
-            <div class="form-check">
-                <div class="remember-me">
-                    <input type="checkbox" 
-                           id="remember" 
-                           name="remember" 
-                           class="form-check-input"
-                           {{ old('remember') ? 'checked' : '' }}>
-                    <label class="form-check-label" for="remember">
-                        Se souvenir de moi
-                    </label>
-                </div>
-                <a href="{{ url('/forgot-password') }}" class="forgot-password">
-                    Mot de passe oublié ?
-                </a>
-            </div>
-
-            <!-- Bouton de connexion -->
-            <button type="submit" class="btn-login">
-                <i class="fas fa-sign-in-alt"></i>
-                Se connecter
-            </button>
-        </form>
-
-        <div class="divider">
-            <span>ou</span>
-        </div>
-
-        <div class="register-link">
-            <p>Vous n'avez pas de compte ? <a href="{{ url('/register') }}">Créez-en un</a></p>
-        </div>
+    <div class="login-header">
+        <h1>Connexion</h1>
+        <p>Connectez-vous à votre compte</p>
     </div>
 
-    <script>
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eye-icon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
+    <div id="alert-container"></div>
+
+    <form id="login-form" class="login-form" novalidate>
+        <!-- Email -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="votre@email.com"
+                required
+                autocomplete="email"
+                class="form-control"
+            />
+            <span class="invalid-feedback" id="email-error" style="display:none;"></span>
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <div class="password-input">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Votre mot de passe"
+                    required
+                    autocomplete="current-password"
+                    class="form-control"
+                />
+                <button type="button" class="toggle-password" onclick="togglePassword()">
+                    <i class="fas fa-eye" id="eye-icon"></i>
+                </button>
+            </div>
+            <span class="invalid-feedback" id="password-error" style="display:none;"></span>
+        </div>
+
+        <div class="form-check">
+            <div class="remember-me">
+                <input type="checkbox" id="remember" name="remember" class="form-check-input" />
+                <label class="form-check-label" for="remember">Se souvenir de moi</label>
+            </div>
+            <a href="{{ url('/forgot-password') }}" class="forgot-password">
+                Mot de passe oublié ?
+            </a>
+        </div>
+
+        <button type="submit" class="btn-login">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+        </button>
+        <button type="button" class="btn-login" onclick="guestAccess()">
+            <i class="fas fa-user"></i> Continuer sans compte
+        </button>
+    </form>
+
+    <div class="divider">
+        <span>ou</span>
+    </div>
+
+    <div class="register-link">
+        <p>Vous n'avez pas de compte ? <a href="{{ url('/register') }}">Créez-en un</a></p>
+    </div>
+
+    </div>
+</div>
+<script>
+    function guestAccess() {
+        sessionStorage.setItem('userLoggedIn', 'true');
+        sessionStorage.setItem('userEmail', 'invité');
+        window.location.href = '{{ route('welcome') }}';
+    }
+
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
         }
-    </script>
+    }
+
+    const loginForm = document.getElementById('login-form');
+    const alertContainer = document.getElementById('alert-container');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('email-error');
+    const passwordError = document.getElementById('password-error');
+
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        alertContainer.innerHTML = '';
+        emailError.style.display = 'none';
+        passwordError.style.display = 'none';
+        emailInput.classList.remove('is-invalid');
+        passwordInput.classList.remove('is-invalid');
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const remember = document.getElementById('remember').checked;
+
+        let hasError = false;
+
+        if (!email) {
+            emailError.textContent = 'Veuillez entrer votre email.';
+            emailError.style.display = 'block';
+            emailInput.classList.add('is-invalid');
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            emailError.textContent = "L'adresse email n'est pas valide.";
+            emailError.style.display = 'block';
+            emailInput.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (!password) {
+            passwordError.textContent = 'Veuillez entrer votre mot de passe.';
+            passwordError.style.display = 'block';
+            passwordInput.classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        if (email === 'test@exemple.com' && password === 'password123' || email === 'admin@example.com' && password === 'password123') {
+            if (remember) {
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+            } else {
+                sessionStorage.setItem('userLoggedIn', 'true');
+                sessionStorage.setItem('userEmail', email);
+            }
+
+            alertContainer.innerHTML = `<div class="alert alert-success">Connexion réussie !</div>`;
+            loginForm.reset();
+
+            setTimeout(() => {
+                // Redirection conditionnelle selon l'email
+                if (email === 'admin@example.com') {
+                    sessionStorage.setItem('userAdmin', 'true');
+                    window.location.href = '{{ route('dashboard') }}';
+                } else {
+                    window.location.href = '{{ route('welcome') }}';
+                }
+            }, 1500);
+        } else {
+            alertContainer.innerHTML = `<div class="alert alert-danger">Email ou mot de passe incorrect.</div>`;
+        }
+
+    });
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+</script>
 </body>
 </html>
