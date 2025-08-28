@@ -45,7 +45,7 @@ jobs:
         run: cd cesizen && cp .env.example .env
 
       - name: Générer la clé de l'application
-        run: php artisan key:generate
+        run: cd cesizen && php artisan key:generate
 
       - name: Attendre MySQL
         run: |
