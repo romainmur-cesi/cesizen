@@ -28,6 +28,9 @@ jobs:
       - name: Récupérer le code
         uses: actions/checkout@v3
 
+      - name: Vérifier la structure
+        run: ls -R
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -36,13 +39,13 @@ jobs:
           coverage: none
 
       - name: Installer Composer
-        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+        run: cd cesizen/cesizen && composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Copier le fichier .env
-        run: cp .env.example .env
+        run: cd cesizen/cesizen && cp .env.example .env
 
       - name: Générer la clé de l'application
-        run: php artisan key:generate
+        run: cd cesizen/cesizen && php artisan key:generate
 
       - name: Attendre MySQL
         run: |
@@ -52,10 +55,10 @@ jobs:
           done
 
       - name: Lancer les migrations
-        run: cd cesizen && php artisan migrate --force
+        run: cd cesizen/cesizen && php artisan migrate --force
 
       - name: Lancer les tests Laravel
-        run: cd cesizen && php artisan test
+        run: cd cesizen/cesizen && php artisan test
 
   vue-build:
     runs-on: ubuntu-latest
@@ -70,7 +73,7 @@ jobs:
           node-version: "18"
 
       - name: Installer les dépendances
-        run: cd cesizen && npm install
+        run: cd cesizen/cesizen && npm install
 
       - name: Build du front Vue.js
-        run: cd cesizen && npm run build
+        run: cd cesizen/cesizen && npm run build
