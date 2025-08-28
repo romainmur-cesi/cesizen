@@ -39,10 +39,10 @@ jobs:
           coverage: none
 
       - name: Installer Composer
-        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+        run: cd cesizen && composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Copier le fichier .env
-        run: cp .env.example .env
+        run: cd cesizen && cp .env.example .env
 
       - name: Générer la clé de l'application
         run: php artisan key:generate
