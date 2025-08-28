@@ -7,10 +7,23 @@ use PHPUnit\Framework\TestCase;
 class ExampleTest extends TestCase
 {
     /**
-     * A basic test example.
+     * Test simple : addition de deux nombres.
      */
-    public function test_that_true_is_true(): void
+    public function test_addition(): void
     {
-        $this->assertTrue(true);
+        $a = 2;
+        $b = 3;
+        $result = $a + $b;
+
+        $this->assertEquals(5, $result, "L'addition devrait donner 5");
+    }
+
+    /**
+     * Test que du texte contient une sous-chaîne.
+     */
+    public function test_string_contains(): void
+    {
+        $message = "Bonjour CESIZen";
+        $this->assertStringContainsString("CESIZen", $message);
     }
 }
