@@ -28,6 +28,9 @@ jobs:
       - name: Récupérer le code
         uses: actions/checkout@v3
 
+      - name: Vérifier la structure
+        run: ls -R
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
