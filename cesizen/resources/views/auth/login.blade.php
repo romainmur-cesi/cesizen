@@ -520,7 +520,7 @@
 
         if (hasError) return;
 
-        if (email === 'test@exemple.com' && password === 'password123' || email === 'admin@example.com' && password === 'password123') {
+        if (email === 'test@exemple.com' && password === 'password123' || email === 'admin@exemple.com' && password === 'password123') {
             if (remember) {
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('userEmail', email);
@@ -534,7 +534,7 @@
 
             setTimeout(() => {
                 // Redirection conditionnelle selon l'email
-                if (email === 'admin@example.com') {
+                if (email === 'admin@exemple.com') {
                     sessionStorage.setItem('userAdmin', 'true');
                     window.location.href = '{{ route('dashboard') }}';
                 } else {
