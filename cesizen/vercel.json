@@ -1,21 +1,16 @@
 {
-  "functions": {
-    "server.php": {
-      "runtime": "vercel-php@0.6.0"
-    }
-  },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/build/(.*)",
-      "dest": "/public/build/$1"
+      "source": "/build/(.*)",
+      "destination": "/public/build/$1"
     },
     {
-      "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
-      "dest": "/public/$1"
+      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
+      "destination": "/public/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/server.php"
+      "source": "/(.*)",
+      "destination": "/server.php"
     }
   ],
   "buildCommand": "npm run build",
