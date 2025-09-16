@@ -1,19 +1,15 @@
 {
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/build/(.*)",
-      "destination": "/public/build/$1"
-    },
-    {
-      "source": "/(.*\\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
-      "destination": "/public/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/server.php"
+      "src": "server.php",
+      "use": "@vercel/php@0.6.0"
     }
   ],
-  "buildCommand": "npm run build",
-  "outputDirectory": "./",
-  "installCommand": "npm install"
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.php"
+    }
+  ]
 }
