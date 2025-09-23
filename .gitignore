@@ -1,11 +1,2 @@
-# Ignorer les Dockerfiles
 Dockerfile
-Dockerfile.*
-
-# Ignorer docker-compose
 docker-compose.yml
-docker-compose.override.yml
-docker-compose.*
-
-# (optionnel) Ignorer dossiers liés à Docker
-.docker/
